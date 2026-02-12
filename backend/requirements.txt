@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+motor
+dnspython
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
+python-dotenv
+pytest
+httpx
+openai
+email-validator
+bcrypt==3.2.2  

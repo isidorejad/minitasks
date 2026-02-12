@@ -15,15 +15,15 @@ You must set these in your Fly.io dashboard or local `.env`:
 2.  **Login**: `flyctl auth login`
 3.  **Launch**:
     ```bash
-    fly launch --no-deploy
+    flyctl launch --no-deploy
     ```
     *   Say "Yes" to copying configuration if asked.
     *   This generates/updates `fly.toml`.
 4.  **Set Secrets**:
     ```bash
-    fly secrets set MONGO_URL="mongodb+srv://..." SECRET_KEY="..." GOOGLE_API_KEY="..."
+    flyctl secrets set MONGO_URL="mongodb+srv://..." SECRET_KEY="..." GOOGLE_API_KEY="..."
     ```
 5.  **Deploy**:
     ```bash
-    fly deploy
+    flyctl deploy
     ```

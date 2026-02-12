@@ -1,42 +1,29 @@
-# MiniTasks Backend API
+# MiniTasks Backend
 
-Built with **FastAPI** and **Motor** (Async MongoDB driver).
+This is the Python/FastAPI backend for MiniTasks, configured for deployment on Fly.io.
 
-## 🔐 Security & Design
-- **Authentication**: Custom OAuth2 flow using JWT (JSON Web Tokens).
-- **Password Safety**: Hashing performed via `bcrypt` (passlib).
-- **Validation**: Strict Pydantic models.
-- **AI Fallback**: Robust error handling for OpenAI; falls back to random dates on failure.
+## 🔑 Environment Variables
+You must set these in your Fly.io dashboard or local `.env`:
+*   `MONGO_URL`: Your MongoDB Atlas connection string.
+*   `DB_NAME`: `minitasks`
+*   `SECRET_KEY`: A secure random string.
+*   `GOOGLE_API_KEY`: Your Gemini API Key (from Google AI Studio).
+*   `ALLOWED_ORIGINS`: Comma-separated list of frontend URLs (e.g., `http://localhost:3000,https://mini-tasks.vercel.app`).
 
-## ⚙️ Setup & Installation
-
-### Option 1: Docker (Recommended)
-Run from the root directory using `docker-compose`.
-
-### Option 2: Local Development
-1.  **Create venv**:
+## 🚀 Deployment (Fly.io)
+1.  **Install Fly CLI**: `curl -L https://fly.io/install.sh | sh`
+2.  **Login**: `flyctl auth login`
+3.  **Launch**:
     ```bash
-    python -m venv venv
-    source venv/bin/activate  # Windows: venv\Scripts\activate
+    fly launch --no-deploy
     ```
-2.  **Install Deps**:
+    *   Say "Yes" to copying configuration if asked.
+    *   This generates/updates `fly.toml`.
+4.  **Set Secrets**:
     ```bash
-    pip install -r requirements.txt
+    fly secrets set MONGO_URL="mongodb+srv://..." SECRET_KEY="..." GOOGLE_API_KEY="..."
     ```
-3.  **Environment Variables**:
-    Create a `.env` file in this directory:
-    ```env
-    SECRET_KEY=super_secret_key_change_me
-    ALGORITHM=HS256
-    MONGO_URL=mongodb://localhost:27017
-    DB_NAME=minitasks
-    OPENAI_API_KEY=your_key_here
-    ALLOWED_ORIGINS=http://localhost:3000
-    ```
-4.  **Run**:
+5.  **Deploy**:
     ```bash
-    uvicorn app.main:app --reload --port 8000
+    fly deploy
     ```
-
-## 📚 API Documentation
-Once running, visit `/docs` for the interactive Swagger UI.

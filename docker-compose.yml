@@ -1,4 +1,5 @@
 services:
+  # Local MongoDB for development (No need for Atlas locally)
   db:
     image: mongo:latest
     container_name: minitasks_db
@@ -27,20 +28,20 @@ services:
     environment:
       - MONGO_URL=mongodb://db:27017
       - ALLOWED_ORIGINS=http://localhost:3000
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
 
   frontend:
     build:
       context: ./frontend
       args:
-        - NEXT_PUBLIC_API_URL=http://localhost:3000/api
+        # Points the Next.js frontend to the Local Docker Backend
+        - NEXT_PUBLIC_API_URL=http://localhost:8000
     container_name: minitasks_frontend
     restart: always
     ports:
       - "3000:3000"
     depends_on:
       - backend
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
 
 volumes:
   mongodb_data:

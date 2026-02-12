@@ -1,0 +1,20 @@
+# flyctl launch added from .gitignore
+# Python
+**\__pycache__
+**\*.py[cod]
+**\*$py.class
+**\.venv
+**\venv
+**\ENV
+**\env
+
+# Secrets
+**\.env
+
+# Tests
+**\.pytest_cache
+**\.coverage
+
+# OS
+**\.DS_Store
+fly.toml

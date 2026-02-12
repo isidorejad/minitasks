@@ -1,14 +1,25 @@
 "use client";
 import './globals.css';
-import { useEffect, useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 
 export default function RootLayout({ children }) {
-  const [token, setToken] = useState(Cookies.get('token'));
+  const [token, setToken] = useState(null);
   const router = useRouter();
   const pathname = usePathname();
+
+  // Initialize token on mount
+  useEffect(() => {
+    setToken(Cookies.get('token'));
+  }, []);
+
+  // Watch for route changes to update the Navbar state (Login -> Logout)
+  useEffect(() => {
+    const currentToken = Cookies.get('token');
+    setToken(currentToken);
+  }, [pathname]);
 
   const logout = () => {
     Cookies.remove('token');
@@ -20,6 +31,10 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
+      <head>
+        <title>MiniTasks - Organize Your Life</title>
+        <meta name="description" content="Simple, effective task management." />
+      </head>
       <body className="antialiased min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-700">
         
         {/* Modern Glass Navbar */}

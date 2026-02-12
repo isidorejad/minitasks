@@ -18,6 +18,7 @@ export default function Signup() {
 
     try {
       await api.post('/auth/signup', { email, password });
+      // Redirect to login on success
       router.push('/login');
     } catch (err) {
       if (err.response && err.response.data && err.response.data.detail) {

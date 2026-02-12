@@ -16,6 +16,7 @@ export default function Login() {
     setLoading(true);
 
     try {
+      // Backend expects OAuth2 form data
       const params = new URLSearchParams();
       params.append('username', email);
       params.append('password', password);
@@ -26,7 +27,9 @@ export default function Login() {
         }
       });
 
+      // Save token
       Cookies.set('token', res.data.access_token);
+      // Redirect to home
       window.location.href = '/'; 
     } catch (err) {
       console.error(err);

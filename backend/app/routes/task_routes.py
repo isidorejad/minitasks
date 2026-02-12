@@ -1,8 +1,8 @@
 import os
-import random # Added for the random fallback
-import openai
+import random
+import google.generativeai as genai
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing import List, Optional # Corrected: Optional comes from typing
+from typing import List, Optional
 from app.database import task_collection
 from app.models import TaskCreate, TaskUpdate, TaskInDB, UserInDB, AIRequest
 from app.routes.auth_routes import get_current_user
@@ -75,38 +75,41 @@ async def delete_task(task_id: str, current_user: UserInDB = Depends(get_current
     
     return {"message": "Task deleted"}
 
-# --- AI BONUS WITH ROBUST FALLBACK ---
+# --- AI BONUS WITH GEMINI & FALLBACK ---
 
 @router.post("/suggest-due-date")
 async def suggest_due_date(request: AIRequest, current_user: UserInDB = Depends(get_current_user)):
-    api_key = os.getenv("OPENAI_API_KEY")
+    api_key = os.getenv("GOOGLE_API_KEY")
     
-    # helper for the random fallback (1-5 days)
+    # Helper for the random fallback (1-5 days)
     def get_random_fallback():
         random_days = random.randint(1, 5)
         return (datetime.utcnow() + timedelta(days=random_days)).date().isoformat()
 
     # Fallback if no key is provided
-    if not api_key or api_key == "your_openai_key_here":
+    if not api_key:
         return {"suggested_date": get_random_fallback()}
 
-    client = openai.OpenAI(api_key=api_key)
-    
     try:
-        prompt = f"Analyze this task description and suggest a due date (YYYY-MM-DD) relative to today ({datetime.utcnow().date()}). Return ONLY the date. Description: {request.description}"
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-2.5-flash')
         
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=15
+        prompt = (
+            f"Analyze this task description and suggest a due date (YYYY-MM-DD) "
+            f"relative to today ({datetime.utcnow().date()}). "
+            f"Return ONLY the date string, nothing else. "
+            f"Description: {request.description}"
         )
         
-        date_str = response.choices[0].message.content.strip()
+        response = model.generate_content(prompt)
+        date_str = response.text.strip()
+        
         # Basic validation to ensure the AI returned a string that looks like a date
-        if len(date_str) > 10: 
+        if len(date_str) > 12:  # YYYY-MM-DD is 10 chars, allowing for small variance
+             print(f"AI returned invalid format: {date_str}")
              return {"suggested_date": get_random_fallback()}
              
         return {"suggested_date": date_str}
     except Exception as e:
-        print(f"AI Error: {e}")
+        print(f"Gemini AI Error: {e}")
         return {"suggested_date": get_random_fallback()}

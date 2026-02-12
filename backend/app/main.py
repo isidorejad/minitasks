@@ -5,12 +5,13 @@ from app.routes import auth_routes, task_routes
 
 app = FastAPI(title="Mini Tasks API")
 
+# Allow Vercel and Localhost
 raw_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000")
 origins = [origin.strip() for origin in raw_origins.split(",")]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=origins, 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

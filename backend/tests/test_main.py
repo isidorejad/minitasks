@@ -1,7 +1,7 @@
 import pytest
 from httpx import AsyncClient
 from app.main import app
-from app.database import user_collection
+from app.database import user_collection, task_collection
 
 @pytest.mark.asyncio
 async def test_signup():
@@ -34,3 +34,19 @@ async def test_create_task():
         
     assert response.status_code == 200
     assert response.json()["title"] == "Test Task"
+
+@pytest.mark.asyncio
+async def test_get_tasks():
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        # Login
+        login_res = await ac.post("/auth/login", data={
+            "username": "test@example.com", 
+            "password": "password123"
+        })
+        token = login_res.json()["access_token"]
+
+        # Get Tasks
+        response = await ac.get("/tasks/", headers={"Authorization": f"Bearer {token}"})
+    
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)

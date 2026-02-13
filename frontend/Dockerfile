@@ -1,40 +1,41 @@
-# Stage 1: Dependencies
+# 1. Dependency Stage
 FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package*.json ./
+
+# Copy package files to install dependencies
+COPY package.json package-lock.json* ./ 
 RUN npm ci
 
-# Stage 2: Builder
+# 2. Builder Stage
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Pass build-time environment variables
+# ARGS for build-time environment variables
 ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
+# Build the application
 RUN npm run build
 
-# Stage 3: Runner
+# 3. Runner Stage (Production)
 FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Create a non-root user for security
+# Create non-root user for security
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Set permissions
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+# Copy necessary files from builder
+COPY --from=builder /app/public ./public
 
 # Automatically leverage output traces to reduce image size
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 USER nextjs
 

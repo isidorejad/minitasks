@@ -4,11 +4,14 @@ This is the Python/FastAPI backend for MiniTasks, configured for deployment on F
 
 ## 🔑 Environment Variables
 You must set these in your Fly.io dashboard or local `.env`:
-*   `MONGO_URL`: Your MongoDB Atlas connection string.
-*   `DB_NAME`: `minitasks`
-*   `SECRET_KEY`: A secure random string.
-*   `GOOGLE_API_KEY`: Your Gemini API Key (from Google AI Studio).
-*   `ALLOWED_ORIGINS`: Comma-separated list of frontend URLs (e.g., `http://localhost:3000,https://mini-tasks.vercel.app`).
+* `MONGO_URL`: Your MongoDB Atlas connection string.
+* `DB_NAME`: `minitasks`
+* `SECRET_KEY`: A secure random string.
+* `GOOGLE_API_KEY`: Your Gemini API Key (from Google AI Studio).
+* `ALLOWED_ORIGINS`: Comma-separated list of frontend URLs (e.g., `http://localhost:3000,https://mini-tasks.vercel.app`).
+
+## 🏗 Architecture
+<img src="./architecture.png" alt="System Architecture Diagram" width="600" />
 
 ## 🚀 Deployment (Fly.io)
 1.  **Install Fly CLI**: `curl -L https://fly.io/install.sh | sh`
@@ -17,8 +20,8 @@ You must set these in your Fly.io dashboard or local `.env`:
     ```bash
     fly launch --no-deploy
     ```
-    *   Say "Yes" to copying configuration if asked.
-    *   This generates/updates `fly.toml`.
+    * Say "Yes" to copying configuration if asked.
+    * This generates/updates `fly.toml`.
 4.  **Set Secrets**:
     ```bash
     fly secrets set MONGO_URL="mongodb+srv://..." SECRET_KEY="..." GOOGLE_API_KEY="..."

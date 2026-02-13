@@ -92,6 +92,7 @@ async def suggest_due_date(request: AIRequest, current_user: UserInDB = Depends(
 
     try:
         genai.configure(api_key=api_key)
+        # Using Gemini 2.5 Flash as preferred in 2026
         model = genai.GenerativeModel('gemini-2.5-flash')
         
         prompt = (

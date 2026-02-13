@@ -16,21 +16,17 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // Backend expects OAuth2 form data
       const params = new URLSearchParams();
       params.append('username', email);
       params.append('password', password);
       
       const res = await api.post('/auth/login', params, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       });
 
-      // Save token
       Cookies.set('token', res.data.access_token);
-      // Redirect to home
-      window.location.href = '/'; 
+      
+      window.location.href = '/dashboard'; 
     } catch (err) {
       console.error(err);
       setError('Invalid email or password.');

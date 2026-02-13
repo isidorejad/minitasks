@@ -113,4 +113,3 @@ pytest
 * **Auth**: Currently uses stateless JWTs. For higher security, we would implement Refresh Tokens and store access tokens in `httpOnly` cookies to prevent XSS.
 * **Database**: MongoDB is schema-less, but we enforce strict schemas via Pydantic. A migration tool (like Beanie or Alembic) would be added for production schema changes.
 * **AI Context**: Currently, the AI only sees the description. Future versions could pass the user's "historical velocity" to better estimate due dates.
-```
